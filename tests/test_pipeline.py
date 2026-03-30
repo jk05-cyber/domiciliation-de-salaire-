@@ -43,24 +43,24 @@ class SalaryPipelineTestCase(unittest.TestCase):
         return path
 
     def _write_default_inputs(self) -> None:
-        novembre = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege;Date Operation;Montant Devise Local
-1001;PARTICULIER;1;SALAIRE ACME SA;001;28/11/2025;5000,00
-1002;PARTICULIER;2;ACHAT CB;001;12/11/2025;-250,50
-"""
         decembre = """Identifiant SAB,Libelle Court Segment,ID Mouvement,Libelle Mouvement,Code Siege,Date Operation,Montant Devise Local
-1001,PARTICULIER,3,SALAIRE ACME SA,001,28/12/2025,5050.00
-1003,PRO,4,VERSEMENT ESPECES,001,10/12/2025,3000.00
+1001,PARTICULIER,1,SALAIRE ACME SA,001,28/12/2025,5000.00
+1002,PARTICULIER,2,ACHAT CB,001,12/12/2025,-250.50
 """
         janvier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege;Date Operation;Montant Devise Local
-1001;PARTICULIER;5;SALAIRE ACME SA;001;03/01/2026;4980,00
-1002;PARTICULIER;6;LOYER;001;05/01/2026;-900,00
+1001;PARTICULIER;3;SALAIRE ACME SA;001;28/01/2026;5050,00
+1003;PRO;4;VERSEMENT ESPECES;001;10/01/2026;3000,00
 """
-        self._write_file("novembre.csv", novembre)
+        fevrier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege;Date Operation;Montant Devise Local
+1001;PARTICULIER;5;SALAIRE ACME SA;001;03/02/2026;4980,00
+1002;PARTICULIER;6;LOYER;001;05/02/2026;-900,00
+"""
         self._write_file("decembre.csv", decembre)
         self._write_file("janvier.csv", janvier)
+        self._write_file("fevrier.csv", fevrier)
 
     def test_read_csv_with_semicolon_separator(self) -> None:
-        path = self._write_file("novembre.csv", "Identifiant SAB;Date Operation\n1;01/01/2025\n")
+        path = self._write_file("janvier.csv", "Identifiant SAB;Date Operation\n1;01/01/2025\n")
         df = io_utils.read_csv_with_auto_separator(path)
         self.assertIn("Identifiant SAB", df.columns)
 
@@ -84,7 +84,7 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "Code Siege": ["001", "001"],
                 "Date Operation": ["28/11/2025", "29/11/2025"],
                 "Montant Devise Local": ["5000,00", "-100,00"],
-                "mois_source": ["novembre", "novembre"],
+                "mois_source": ["decembre", "decembre"],
             }
         )
         credits, all_clients = preprocess_transactions(raw)
@@ -104,9 +104,9 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "ID Mouvement": ["1", "2", "3"],
                 "Libelle Mouvement": ["SALAIRE ACME SA"] * 3,
                 "Code Siege": ["001"] * 3,
-                "Date Operation": pd.to_datetime(["2025-11-28", "2025-12-28", "2026-01-03"]),
+                "Date Operation": pd.to_datetime(["2025-12-28", "2026-01-28", "2026-02-03"]),
                 "Montant Devise Local": [5000.0, 5050.0, 4980.0],
-                "mois_source": ["novembre", "decembre", "janvier"],
+                "mois_source": ["decembre", "janvier", "fevrier"],
                 "emetteur_normalise": ["SALAIRE ACME SA"] * 3,
                 "jour_operation": [28, 28, 3],
             }
@@ -124,9 +124,9 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "ID Mouvement": ["1", "2"],
                 "Libelle Mouvement": ["VERSEMENT ESPECES", "VERSEMENT ESPECES"],
                 "Code Siege": ["001", "001"],
-                "Date Operation": pd.to_datetime(["2025-11-10", "2025-12-10"]),
+                "Date Operation": pd.to_datetime(["2025-12-10", "2026-01-10"]),
                 "Montant Devise Local": [3000.0, 3100.0],
-                "mois_source": ["novembre", "decembre"],
+                "mois_source": ["decembre", "janvier"],
                 "emetteur_normalise": ["VERSEMENT ESPECES", "VERSEMENT ESPECES"],
                 "jour_operation": [10, 10],
             }
@@ -139,20 +139,18 @@ class SalaryPipelineTestCase(unittest.TestCase):
     def test_pipeline_selects_best_candidate_and_keeps_undetermined_clients(self) -> None:
         self._write_default_inputs()
 
-        with patch("src.config.INPUT_DIR", self.input_dir), patch("src.config.OUTPUT_DIR", self.output_dir):
-            with patch.dict(
-                "src.config.EXPECTED_FILES",
+        with patch.dict(
+                "src.io_utils.EXPECTED_FILES",
                 {
-                    "novembre": self.input_dir / "novembre.csv",
                     "decembre": self.input_dir / "decembre.csv",
                     "janvier": self.input_dir / "janvier.csv",
+                    "fevrier": self.input_dir / "fevrier.csv",
                 },
                 clear=True,
+            ), patch("src.io_utils.OUTPUT_DIR", self.output_dir), patch(
+                "src.pipeline.OUTPUT_DIR", self.output_dir
             ):
-                with patch("src.io_utils.OUTPUT_DIR", self.output_dir), patch(
-                    "src.pipeline.OUTPUT_DIR", self.output_dir
-                ):
-                    final_df, candidates_df, summary = pipeline.run_pipeline()
+            final_df, candidates_df, summary = pipeline.run_pipeline()
 
         self.assertEqual(summary["nombre_fichiers_charges"], 3)
         self.assertEqual(len(final_df), 3)
@@ -173,4 +171,3 @@ class SalaryPipelineTestCase(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

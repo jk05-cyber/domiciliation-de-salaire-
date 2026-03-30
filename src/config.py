@@ -7,9 +7,9 @@ INPUT_DIR = BASE_DIR / "input"
 OUTPUT_DIR = BASE_DIR / "output"
 
 EXPECTED_FILES = {
-    "novembre": INPUT_DIR / "novembre.csv",
     "decembre": INPUT_DIR / "decembre.csv",
     "janvier": INPUT_DIR / "janvier.csv",
+    "fevrier": INPUT_DIR / "fevrier.csv",
 }
 
 REQUIRED_COLUMNS = [
@@ -70,4 +70,3 @@ CONFIDENCE_FORTE_MIN = 60
 CONFIDENCE_MOYENNE_MIN = 45
 
 LOG_FORMAT = "%(asctime)s | %(levelname)s | %(name)s | %(message)s"
-

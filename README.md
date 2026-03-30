@@ -7,9 +7,9 @@ Projet Python de détection de salaire probable à partir de 3 fichiers CSV mens
 ```text
 salary_detection_pipeline/
 ├── input/
-│   ├── novembre.csv
 │   ├── decembre.csv
-│   └── janvier.csv
+│   ├── janvier.csv
+│   └── fevrier.csv
 ├── output/
 ├── src/
 │   ├── __init__.py
@@ -31,9 +31,9 @@ salary_detection_pipeline/
 
 Déposez les trois fichiers métier dans le dossier `input/` avec exactement ces noms :
 
-- `input/novembre.csv`
 - `input/decembre.csv`
 - `input/janvier.csv`
+- `input/fevrier.csv`
 
 Les fichiers peuvent utiliser `;` ou `,` comme séparateur. Le pipeline gère également :
 
@@ -124,4 +124,3 @@ python -m unittest discover -s tests
 
 - Les fichiers présents dans `input/` sont des placeholders avec en-têtes pour faciliter le démarrage.
 - Le code est structuré pour être lisible, maintenable et industrialisable.
-
