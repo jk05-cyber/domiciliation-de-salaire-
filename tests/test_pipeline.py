@@ -20,12 +20,6 @@ from src.preprocessing import normalize_amount, normalize_label, preprocess_tran
 from src.scoring import score_candidates
 
 
-REQUIRED_HEADER = (
-    "Identifiant SAB,Libelle Court Segment,ID Mouvement,Libelle Mouvement,Code Siege,Date Operation,"
-    "Montant Devise Local\n"
-)
-
-
 class SalaryPipelineTestCase(unittest.TestCase):
     def setUp(self) -> None:
         self.temp_dir = Path(tempfile.mkdtemp(prefix="salary_pipeline_test_"))
@@ -43,15 +37,15 @@ class SalaryPipelineTestCase(unittest.TestCase):
         return path
 
     def _write_default_inputs(self) -> None:
-        decembre = """Identifiant SAB,Libelle Court Segment,ID Mouvement,Libelle Mouvement,Code Siege,Date Operation,Montant Devise Local
-1001,PARTICULIER,1,SALAIRE ACME SA,001,28/12/2025,5000.00
-1002,PARTICULIER,2,ACHAT CB,001,12/12/2025,-250.50
+        decembre = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege Emeteur;Date Operation;Montant Devise Local
+1001;PARTICULIER;1;SALAIRE ACME SA;001;28/12/2025;5000,00
+1002;PARTICULIER;2;ACHAT CB;001;12/12/2025;-250,50
 """
-        janvier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege;Date Operation;Montant Devise Local
+        janvier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege Emeteur;Date Operation;Montant Devise Local
 1001;PARTICULIER;3;SALAIRE ACME SA;001;28/01/2026;5050,00
 1003;PRO;4;VERSEMENT ESPECES;001;10/01/2026;3000,00
 """
-        fevrier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege;Date Operation;Montant Devise Local
+        fevrier = """Identifiant SAB;Libelle Court Segment;ID Mouvement;Libelle Mouvement;Code Siege Emeteur;Date Operation;Montant Devise Local
 1001;PARTICULIER;5;SALAIRE ACME SA;001;03/02/2026;4980,00
 1002;PARTICULIER;6;LOYER;001;05/02/2026;-900,00
 """
@@ -81,7 +75,7 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "Libelle Court Segment": ["PART", "PART"],
                 "ID Mouvement": ["1", "2"],
                 "Libelle Mouvement": ["SALAIRE ACME", "PAIEMENT"],
-                "Code Siege": ["001", "001"],
+                "Code Siege Emeteur": ["001", "001"],
                 "Date Operation": ["28/11/2025", "29/11/2025"],
                 "Montant Devise Local": ["5000,00", "-100,00"],
                 "mois_source": ["decembre", "decembre"],
@@ -103,7 +97,7 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "Libelle Court Segment": ["PART", "PART", "PART"],
                 "ID Mouvement": ["1", "2", "3"],
                 "Libelle Mouvement": ["SALAIRE ACME SA"] * 3,
-                "Code Siege": ["001"] * 3,
+                "Code Siege Emeteur": ["001"] * 3,
                 "Date Operation": pd.to_datetime(["2025-12-28", "2026-01-28", "2026-02-03"]),
                 "Montant Devise Local": [5000.0, 5050.0, 4980.0],
                 "mois_source": ["decembre", "janvier", "fevrier"],
@@ -123,7 +117,7 @@ class SalaryPipelineTestCase(unittest.TestCase):
                 "Libelle Court Segment": ["PART", "PART"],
                 "ID Mouvement": ["1", "2"],
                 "Libelle Mouvement": ["VERSEMENT ESPECES", "VERSEMENT ESPECES"],
-                "Code Siege": ["001", "001"],
+                "Code Siege Emeteur": ["001", "001"],
                 "Date Operation": pd.to_datetime(["2025-12-10", "2026-01-10"]),
                 "Montant Devise Local": [3000.0, 3100.0],
                 "mois_source": ["decembre", "janvier"],
@@ -163,8 +157,12 @@ class SalaryPipelineTestCase(unittest.TestCase):
         self.assertEqual(client_1002["statut"], "NON_DETERMINE")
 
         summary_path = self.output_dir / "summary.json"
+        main_output_path = self.output_dir / "salaires_estimes.csv"
         self.assertTrue(summary_path.exists())
+        self.assertTrue(main_output_path.exists())
         loaded_summary = json.loads(summary_path.read_text(encoding="utf-8"))
+        main_output_header = main_output_path.read_text(encoding="utf-8").splitlines()[0]
+        self.assertIn(";", main_output_header)
         self.assertEqual(loaded_summary["nombre_clients"], 3)
         self.assertFalse(candidates_df.empty)
 

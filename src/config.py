@@ -28,6 +28,9 @@ COLUMN_ALIASES = {
     "ID MOUVEMENT": "ID Mouvement",
     "LIBELLE MOUVEMENT": "Libelle Mouvement",
     "CODE SIEGE": "Code Siege",
+    "CODE SIEGE EMETEUR": "Code Siege",
+    "CODE SIEGE EMETEUR ": "Code Siege",
+    "CODE SIEGE EMETTEUR": "Code Siege",
     "DATE OPERATION": "Date Operation",
     "MONTANT DEVISE LOCAL": "Montant Devise Local",
 }

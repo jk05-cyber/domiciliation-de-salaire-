@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .config import EXPECTED_FILES, OUTPUT_DIR, REQUIRED_COLUMNS
+from .config import COLUMN_ALIASES, EXPECTED_FILES, OUTPUT_DIR, REQUIRED_COLUMNS
 from .preprocessing import canonicalize_column_name
 
 LOGGER = logging.getLogger(__name__)
@@ -21,8 +21,11 @@ def ensure_output_dir() -> None:
 
 
 def _score_dataframe_columns(df: pd.DataFrame) -> int:
-    normalized = {canonicalize_column_name(column) for column in df.columns}
-    expected = {canonicalize_column_name(column) for column in REQUIRED_COLUMNS}
+    normalized = {
+        COLUMN_ALIASES.get(canonicalize_column_name(column), canonicalize_column_name(column))
+        for column in df.columns
+    }
+    expected = set(REQUIRED_COLUMNS)
     return len(normalized & expected)
 
 
@@ -33,6 +36,7 @@ def read_csv_with_auto_separator(file_path: Path) -> pd.DataFrame:
     best_df: pd.DataFrame | None = None
     best_score = -1
     best_sep = None
+    max_score = len(REQUIRED_COLUMNS)
 
     for sep in (";", ","):
         try:
@@ -48,6 +52,9 @@ def read_csv_with_auto_separator(file_path: Path) -> pd.DataFrame:
             best_df = df
             best_score = score
             best_sep = sep
+
+        if score == max_score:
+            break
 
     if best_df is None:
         raise ValueError(f"Impossible de lire le fichier CSV: {file_path}")
@@ -73,7 +80,7 @@ def load_monthly_inputs() -> tuple[pd.DataFrame, int]:
 
 def export_dataframe(df: pd.DataFrame, path: Path) -> None:
     ensure_output_dir()
-    df.to_csv(path, index=False, encoding="utf-8")
+    df.to_csv(path, index=False, encoding="utf-8", sep=";")
     LOGGER.info("Fichier exporte: %s", path)
 
 
@@ -81,4 +88,3 @@ def export_summary(summary: dict, path: Path) -> None:
     ensure_output_dir()
     path.write_text(json.dumps(summary, indent=2, ensure_ascii=False), encoding="utf-8")
     LOGGER.info("Synthese exportee: %s", path)
-

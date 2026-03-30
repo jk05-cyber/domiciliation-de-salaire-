@@ -1,8 +1,8 @@
 {
   "nombre_fichiers_charges": 3,
-  "nombre_total_lignes": 0,
-  "nombre_clients": 0,
-  "nombre_clients_salaire_probable": 0,
-  "nombre_clients_revenu_probable": 0,
-  "nombre_clients_non_determine": 0
+  "nombre_total_lignes": 74,
+  "nombre_clients": 8,
+  "nombre_clients_salaire_probable": 2,
+  "nombre_clients_revenu_probable": 1,
+  "nombre_clients_non_determine": 5
 }

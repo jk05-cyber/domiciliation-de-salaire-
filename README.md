@@ -49,7 +49,7 @@ Les CSV doivent contenir au minimum :
 - `Libelle Court Segment`
 - `ID Mouvement`
 - `Libelle Mouvement`
-- `Code Siege`
+- `Code Siege` ou `Code Siege Emeteur`
 - `Date Operation`
 - `Montant Devise Local`
 
@@ -78,6 +78,8 @@ Le pipeline crée automatiquement le dossier `output/` si nécessaire, puis gén
 - `output/salaires_estimes.csv`
 - `output/candidats_salaires.csv`
 - `output/summary.json`
+
+Les fichiers CSV exportés par le pipeline utilisent le séparateur `;`.
 
 ### `salaires_estimes.csv`
 

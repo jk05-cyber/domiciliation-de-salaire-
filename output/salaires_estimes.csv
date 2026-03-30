@@ -1,1 +1,9 @@
-Identifiant SAB,segment_client,emetteur_salaire_probable,nb_occurrences,nb_mois_detectes,mois_detectes,montant_median,montant_min,montant_max,montant_moyen,ecart_type,coefficient_variation,jour_operation_median,score,statut,salaire_estime,confiance,libelle_source_exemple
+Identifiant SAB;segment_client;emetteur_salaire_probable;nb_occurrences;nb_mois_detectes;mois_detectes;montant_median;montant_min;montant_max;montant_moyen;ecart_type;coefficient_variation;jour_operation_median;score;statut;salaire_estime;confiance;libelle_source_exemple
+0010012862;DEV;AXA;2;2;decembre,fevrier;219.88;219.26;220.5;219.88;0.6200000000000045;0.002819719847189397;29.5;25;NON_DETERMINE;219.88;FAIBLE;Com app 31/12/25/002846601/AXA017
+0010013247;GRP;CNSS GESTION;3;3;decembre,janvier,fevrier;600.0;600.0;600.0;600.0;0.0;0.0;4.0;20;NON_DETERMINE;600.0;FAIBLE;VIRT RECU CNSS GESTION
+0010013261;GRP;;0;0;;;;;;;;;0;NON_DETERMINE;;FAIBLE;
+0010013482;TRD;AHMAD NOUREDDINE;3;3;decembre,janvier,fevrier;4500.0;4500.0;4500.0;4500.0;0.0;0.0;5.0;50;SALAIRE_PROBABLE;4500.0;MOYENNE;VIRT RECU AHMAD NOUREDDINE
+0010013500;GRP;ASS CIE CIMR;3;3;decembre,janvier,fevrier;13059.98;13043.17;13059.98;13054.376666666669;7.924309994497002;0.0006070232380172627;26.0;50;SALAIRE_PROBABLE;13059.98;MOYENNE;VIRT RECU ASS CIE CIMR
+0010013509;DEV;ECH;1;1;janvier;833.44;833.44;833.44;833.44;0.0;0.0;25.0;30;REVENU_PROBABLE;833.44;FAIBLE;ECH 1970 000346701
+0010013297;GRP;VERSEMENT ESPECES;1;1;fevrier;1116.0;1116.0;1116.0;1116.0;0.0;0.0;26.0;-15;NON_DETERMINE;1116.0;FAIBLE;Versement Espèces 1086 005578597
+0010013511;TRD;MR MECHACH HAFID;2;1;fevrier;19500.0;19000.0;20000.0;19500.0;500.0;0.02564102564102564;12.0;0;NON_DETERMINE;19500.0;FAIBLE;VIR INST RECU Mr MECHACH HAFID
