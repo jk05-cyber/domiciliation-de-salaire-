@@ -1,0 +1,2 @@
+"""Salary detection pipeline package."""
+
